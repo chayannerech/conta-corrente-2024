@@ -12,10 +12,10 @@ namespace ContaCorrente.ConsoleApp
             this.naturezaTransacao = naturezaTransacao;
         }
 
-        public int Saque(Usuario, int a, int b)
+        public int Saque(int a, int b)
         {
             /* Requisitos
-                Uma conta corrente só pode fazer saques desde que o valor não exceda o limite de saque que é o limite + saldo.*/
+                Uma conta corrente só pode fazer saques desde que o valor não exceda o limite de operacao que é o limite + saldo.*/
             
             return a + b;
         }

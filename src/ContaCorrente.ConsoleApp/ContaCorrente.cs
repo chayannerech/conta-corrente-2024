@@ -4,6 +4,7 @@
     {
         public double saldo, limite, numeroConta;
         public bool status = false; //especial ou não
+        public Movimentacao operacao;
         Random conta = new Random();
 
         Usuario Cliente = new Usuario("nome", "sobrenome", "cpf");
@@ -16,6 +17,12 @@
             this.status = status;
             Cliente = cliente;
         }
+
+        
+
+
+
+
 
         void VisualizacaoSaldo(int aaa)
         {

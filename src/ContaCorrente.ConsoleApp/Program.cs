@@ -14,7 +14,8 @@ namespace ContaCorrente.ConsoleApp
             ContaCorrente ChayDeusa = new ContaCorrente(100000.00, 1000000.00, false, Dudu);
 
             Movimentacao extrato = new Movimentacao(10, "débito");
-            extrato.Saque(1, 2);
+)
+            DuduMendigo.operacao.Saque(1, 2);
             
             
             Console.Read();
