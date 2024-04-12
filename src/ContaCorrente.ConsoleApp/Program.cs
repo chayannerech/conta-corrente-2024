@@ -13,34 +13,22 @@ namespace ContaCorrente.ConsoleApp
 
             //Criar conta corrente
             ContaCorrente ChayDeusa = new ContaCorrente(100000.00, 1000000.00, true, Chay);
-            ContaCorrente DuduMendigo = new ContaCorrente(0.30, 100.00, false, Dudu);
+            ContaCorrente DuduMendigo = new ContaCorrente(30.00, 100.00, false, Dudu);
 
-            Movimentacao movimentacao = new Movimentacao(0, "débito");
+            //Informa que uma movimentação de valor X será realizada
+            Movimentacao movimentacao = new Movimentacao(50, "débito");
 
+            //Realiza a movimentação
             DuduMendigo.Saque(movimentacao);
             ChayDeusa.Deposito(movimentacao);
-            Transferência(DuduMendigo, ChayDeusa, 0);
+
+            Movimentacao movimentacao2 = new Movimentacao(0, "débito");
+            DuduMendigo.Transferência(ChayDeusa, movimentacao2);
+
+            DuduMendigo.MostraHistórico();
+            DuduMendigo.MostraExtrato();
 
             Console.Read();
-        }
-
-        static void Transferência(ContaCorrente contaPaga, ContaCorrente contaRecebe, double valor)
-        {
-            if (contaPaga.saldo >= valor) FazTransferencia(contaPaga, contaRecebe, valor);
-            else Console.WriteLine("Saldo insuficiente");
-        }
-        static void FazTransferencia(ContaCorrente contaPaga, ContaCorrente contaRecebe, double valor)
-        {
-            contaPaga.saldo -= valor;
-            contaRecebe.saldo += valor;
-        }
-        void VisualizacaoSaldo(int aaa)
-        {
-            Console.WriteLine(aaa);
-        }
-        void VisualizacaoExtrato()
-        {
-            Console.WriteLine();
         }
     }
 }

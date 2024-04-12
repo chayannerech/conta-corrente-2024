@@ -1,4 +1,6 @@
-﻿namespace ContaCorrente.ConsoleApp
+﻿using System.ComponentModel.Design;
+
+namespace ContaCorrente.ConsoleApp
 {
     internal class ContaCorrente
     {
@@ -18,61 +20,100 @@
             this.titular = titular;
         }
 
-        //Criar o extrato
-        public Movimentacao[] extrato = new Movimentacao[100];
-        int contador = 0;
+        //Criar o historico de movimentações
+        public Movimentacao[] historicoMovimentacoes = new Movimentacao[100];
+        int contador = 0; //Para preencher o histórico
+
+        //Criar o extrato da conta
+        string[] extrato = new string[100];
 
         //Movimentações
         public void Saque(Movimentacao movimentacao)
         {
-            if (Édebito(movimentacao.naturezaTransacao)) FazSaque(movimentacao.valor, movimentacao);
-            else Console.WriteLine("Operação inválida");
+            if (Édebito(movimentacao.naturezaTransacao)) FazSaque(ref saldo, ref limite, movimentacao);
+            else FazSaque(ref limite, ref saldo, movimentacao);
         }
         public void Deposito(Movimentacao movimentacao)
         {
             if (Édebito(movimentacao.naturezaTransacao)) FazDeposito(movimentacao.valor, movimentacao);
             else Console.WriteLine("Operação inválida");
         }
-
-
-
-
+        public void Transferência(ContaCorrente contaRecebe, Movimentacao movimentacao)
+        {
+            if (Édebito(movimentacao.naturezaTransacao)) FazTransferencia(contaRecebe, ref saldo, movimentacao);
+            else FazTransferencia(contaRecebe, ref limite, movimentacao);
+        }
+        public void MostraHistórico()
+        {
+            Console.WriteLine("\nHistórico de movimentações:");
+            for (int i = 0; i < contador; i++) EscreveHistórico(i);
+        }
+        public void MostraExtrato()
+        {
+            Console.WriteLine("\nExtrato da Conta Corrente:");
+            for (int i = 0; i < contador; i++) Console.WriteLine(extrato[i]);
+        }
 
         //Funções auxiliares
-        public bool Édebito(string naturezaTransacao)
+        bool Édebito(string naturezaTransacao)
         {
             return naturezaTransacao == "débito";
         }
-        public void FazSaque(double valor, Movimentacao movimentacao)
+        bool Ésuficiente(double valorPossuido, double valorMovimentado)
         {
-            if (valor <= limite + saldo) SaldoSuficiente(valor, movimentacao);
+            return valorPossuido >= valorMovimentado;
+        }
+        void FazSaque(ref double saldoOUlimite, ref double excedente, Movimentacao movimentacao)
+        {
+            if (Ésuficiente(saldo, movimentacao.valor - limite))
+            {
+                saldoOUlimite -= movimentacao.valor;
+                //Se o valor do saque for superior ao valor em conta, tira-se o excedente do limite e vice-versa
+                if (saldoOUlimite < 0)
+                {
+                    excedente += saldoOUlimite;
+                    saldoOUlimite = 0;
+                }
+                Console.WriteLine("Saque realizado");
+                SalvaHistorico(movimentacao);
+                SalvaExtrato(movimentacao, "Saque");
+                contador++;
+            }
             else Console.WriteLine("Saldo insuficiente");
         }
-        public void SaldoSuficiente(double valor, Movimentacao movimentacao)
-        {
-            saldo -= valor;
-
-            if (saldo < 0)
-            {
-                limite += saldo;
-                saldo = 0;
-            }
-
-            Console.WriteLine("Saque realizado");
-
-            SalvaExtrato(movimentacao);
-        }
-        public void SalvaExtrato(Movimentacao movimentacao)
-        {
-            extrato[contador] = movimentacao;
-            contador++;
-        }
-        public void FazDeposito(double valor, Movimentacao movimentacao)
+        void FazDeposito(double valor, Movimentacao movimentacao)
         {
             saldo += valor;
             Console.WriteLine("Depósito realizado");
 
-            SalvaExtrato(movimentacao);
+            SalvaHistorico(movimentacao);
+            SalvaExtrato(movimentacao, "Depósito");
+            contador++;
+        }
+        void FazTransferencia(ContaCorrente contaRecebe, ref double saldoOUlimite, Movimentacao movimentacao)
+        {
+            if (Ésuficiente(saldoOUlimite, movimentacao.valor))
+            {
+                saldoOUlimite -= movimentacao.valor;
+                contaRecebe.saldo += movimentacao.valor;
+                Console.WriteLine("Transferência realizada");
+                SalvaHistorico(movimentacao);
+                SalvaExtrato(movimentacao, $"Transferência de {movimentacao.valor} para {contaRecebe.titular.nome}");
+                contador++;
+            }
+            else Console.WriteLine("Saldo insuficiente");
+        }
+        void SalvaHistorico(Movimentacao movimentacao)
+        {
+            historicoMovimentacoes[contador] = movimentacao;
+        }
+        void SalvaExtrato(Movimentacao movimentacao, string operacao)
+        {
+            extrato[contador] = $"{operacao} ({DateTime.Now.ToString("t")}) -> saldo = {saldo}; limite = {limite}";
+        }
+        void EscreveHistórico(int i)
+        {
+            Console.WriteLine(historicoMovimentacoes[i].valor + " " + historicoMovimentacoes[i].naturezaTransacao);
         }
     }
 }
