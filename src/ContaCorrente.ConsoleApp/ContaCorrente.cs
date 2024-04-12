@@ -4,33 +4,75 @@
     {
         public double saldo, limite, numeroConta;
         public bool status = false; //especial ou não
-        public Movimentacao operacao;
-        Random conta = new Random();
+        //Cria o titular
+        public Usuario titular;
 
-        Usuario Cliente = new Usuario("nome", "sobrenome", "cpf");
-
-        public ContaCorrente(double saldo, double limite, bool status, Usuario cliente)
+        //Construtor
+        public ContaCorrente(double saldo, double limite, bool status, Usuario titular)
         {
-            this.numeroConta = conta.Next();
+            Random numero = new Random();
+            this.numeroConta = numero.Next();
             this.saldo = saldo;
             this.limite = limite;
             this.status = status;
-            Cliente = cliente;
+            this.titular = titular;
         }
 
-        
+        //Criar o extrato
+        public Movimentacao[] extrato = new Movimentacao[100];
+        int contador = 0;
 
-
-
-
-
-        void VisualizacaoSaldo(int aaa)
+        //Movimentações
+        public void Saque(Movimentacao movimentacao)
         {
-            Console.WriteLine(aaa);
+            if (Édebito(movimentacao.naturezaTransacao)) FazSaque(movimentacao.valor, movimentacao);
+            else Console.WriteLine("Operação inválida");
         }
-        void VisualizaçãoExtrato()
+        public void Deposito(Movimentacao movimentacao)
         {
-            Console.WriteLine();
+            if (Édebito(movimentacao.naturezaTransacao)) FazDeposito(movimentacao.valor, movimentacao);
+            else Console.WriteLine("Operação inválida");
+        }
+
+
+
+
+
+        //Funções auxiliares
+        public bool Édebito(string naturezaTransacao)
+        {
+            return naturezaTransacao == "débito";
+        }
+        public void FazSaque(double valor, Movimentacao movimentacao)
+        {
+            if (valor <= limite + saldo) SaldoSuficiente(valor, movimentacao);
+            else Console.WriteLine("Saldo insuficiente");
+        }
+        public void SaldoSuficiente(double valor, Movimentacao movimentacao)
+        {
+            saldo -= valor;
+
+            if (saldo < 0)
+            {
+                limite += saldo;
+                saldo = 0;
+            }
+
+            Console.WriteLine("Saque realizado");
+
+            SalvaExtrato(movimentacao);
+        }
+        public void SalvaExtrato(Movimentacao movimentacao)
+        {
+            extrato[contador] = movimentacao;
+            contador++;
+        }
+        public void FazDeposito(double valor, Movimentacao movimentacao)
+        {
+            saldo += valor;
+            Console.WriteLine("Depósito realizado");
+
+            SalvaExtrato(movimentacao);
         }
     }
 }
