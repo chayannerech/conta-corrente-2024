@@ -22,10 +22,10 @@ namespace ContaCorrente.ConsoleApp
             DuduMendigo.Saque(movimentacao);
             ChayDeusa.Deposito(movimentacao);
 
-            Movimentacao movimentacao2 = new Movimentacao(0, "débito");
+            Movimentacao movimentacao2 = new Movimentacao(10, "crédito");
             DuduMendigo.Transferência(ChayDeusa, movimentacao2);
 
-            DuduMendigo.MostraHistórico();
+            DuduMendigo.MostraSaldo();
             DuduMendigo.MostraExtrato();
 
             Console.Read();

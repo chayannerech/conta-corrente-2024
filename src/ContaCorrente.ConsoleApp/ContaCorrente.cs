@@ -43,10 +43,9 @@ namespace ContaCorrente.ConsoleApp
             if (Édebito(movimentacao.naturezaTransacao)) FazTransferencia(contaRecebe, ref saldo, movimentacao);
             else FazTransferencia(contaRecebe, ref limite, movimentacao);
         }
-        public void MostraHistórico()
+        public void MostraSaldo()
         {
-            Console.WriteLine("\nHistórico de movimentações:");
-            for (int i = 0; i < contador; i++) EscreveHistórico(i);
+            Console.WriteLine($"\nSaldo: {saldo}");
         }
         public void MostraExtrato()
         {
@@ -110,10 +109,6 @@ namespace ContaCorrente.ConsoleApp
         void SalvaExtrato(Movimentacao movimentacao, string operacao)
         {
             extrato[contador] = $"{operacao} ({DateTime.Now.ToString("t")}) -> saldo = {saldo}; limite = {limite}";
-        }
-        void EscreveHistórico(int i)
-        {
-            Console.WriteLine(historicoMovimentacoes[i].valor + " " + historicoMovimentacoes[i].naturezaTransacao);
         }
     }
 }
